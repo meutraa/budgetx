@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "190969888366",
+    "firebase_url": "https://lost-budget.firebaseio.com",
+    "project_id": "lost-budget",
+    "storage_bucket": "lost-budget.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190969888366:android:1712a1731bf5e502",
+        "android_client_info": {
+          "package_name": "host.lost.budget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190969888366-hbuohk0cc9en9evkj7sjdhfbhp6pemjb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCidRBA_ypJsk-bLWZrMlpxlX71frt_y5M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190969888366:android:1a1d90b70a21ef40",
+        "android_client_info": {
+          "package_name": "host.lost.budgetx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190969888366-hbuohk0cc9en9evkj7sjdhfbhp6pemjb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCidRBA_ypJsk-bLWZrMlpxlX71frt_y5M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
