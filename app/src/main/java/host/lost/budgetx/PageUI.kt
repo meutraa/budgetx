@@ -1,6 +1,7 @@
 package host.lost.budgetx
 
 import android.view.ViewGroup
+import android.widget.EdgeEffect
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.jetbrains.anko.*
@@ -18,8 +19,9 @@ class PageUI(
         )
         recyclerView {
             itemsList = this
+            setHasFixedSize(true)
             setRecycledViewPool(itemPool)
-            setPadding(0, dip(16), 0, dip(16))
+            setPadding(0, dip(8), 0, 0)
             clipToPadding = false
             layoutManager = object : LinearLayoutManager(ui.ctx) {
                 override fun isLayoutRTL(): Boolean {

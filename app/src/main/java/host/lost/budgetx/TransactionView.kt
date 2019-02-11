@@ -5,11 +5,20 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.VectorDrawable
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewManager
 import androidx.core.content.ContextCompat
+import org.jetbrains.anko.AnkoViewDslMarker
+import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.sp
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+
+inline fun ViewManager.transactionView(init: (@AnkoViewDslMarker TransactionView).() -> Unit) =
+    ankoView({ TransactionView(it) }, theme = 0, init = { init() })
 
 class TransactionView @JvmOverloads constructor(
     context: Context,
@@ -17,59 +26,67 @@ class TransactionView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     companion object {
-        val paint = Paint().apply {
-            color = Color.argb(255, 0, 0, 0)
-            textSize = 24.0f
-            isAntiAlias = true
-        }
-        val df = SimpleDateFormat.getDateInstance()
+        val df = SimpleDateFormat.getDateInstance()!!
+        val nf = DecimalFormat("##.##")
         val icons = mutableMapOf<String, VectorDrawable?>()
+
+        fun getIcon(context: Context, category: String) =
+            icons[category] ?: let {
+                icons[category] =
+                    (ContextCompat.getDrawable(
+                        context,
+                        when (category) {
+                            "Food & Drink" -> R.drawable.ic_restaurant_menu
+                            "Bills" -> R.drawable.ic_money_off
+                            "Personal" -> R.drawable.ic_face
+                            "Holiday" -> R.drawable.ic_beach_access
+                            "Medical" -> R.drawable.ic_local_pharmacy
+                            "Travel" -> R.drawable.ic_airport_shuttle
+                            "Pets" -> R.drawable.ic_pets
+                            "House" -> R.drawable.ic_home
+                            "Income" -> R.drawable.ic_credit_card
+                            else -> R.drawable.ic_all_inclusive
+                        }
+                    ) as? VectorDrawable)?.apply {
+                        setBounds(context.dip(16), context.dip(8), context.dip(48), context.dip(40))
+                    }
+                icons[category]
+            }
+    }
+
+    private val paint = TextPaint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
+        color = Color.argb(255, 0, 0, 0)
+        textSize = sp(12).toFloat()
     }
 
     private var transaction: Transaction? = null
+    private var position: Int = 0
 
-    fun setTransaction(item: Transaction) {
+    fun setTransaction(item: Transaction, position: Int) {
         transaction = item
+        this.position = position
         invalidate()
     }
 
-    private fun getIcon(category: String) =
-        icons[category] ?: let {
-            icons[category] =
-                (ContextCompat.getDrawable(
-                    context,
-                    when (category) {
-                        "Food & Drink" -> R.drawable.ic_restaurant_menu
-                        "Bills" -> R.drawable.ic_money_off
-                        "Personal" -> R.drawable.ic_face
-                        "Holiday" -> R.drawable.ic_beach_access
-                        "Medical" -> R.drawable.ic_local_pharmacy
-                        "Travel" -> R.drawable.ic_airport_shuttle
-                        "Pets" -> R.drawable.ic_pets
-                        "House" -> R.drawable.ic_home
-                        "Income" -> R.drawable.ic_credit_card
-                        else -> R.drawable.ic_all_inclusive
-                    }
-                ) as? VectorDrawable)?.apply {
-                    setBounds(0, 0, dip(32), dip(32))
-                }
-            icons[category]
-        }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        val leftMarg = dip(16)
+
         transaction?.apply {
             val left = dip(48).toFloat()
-            canvas.drawText(value.toString(), left, dip(12).toFloat(), paint)
+            canvas.drawText(nf.format(value), left + leftMarg, dip(20).toFloat(), paint)
+            paint.textSize = sp(10).toFloat()
             canvas.drawText(
                 if (date != null) df.format(date?.toDate()) else "N/A",
-                dip(220).toFloat(),
+                dip(270).toFloat(),
                 dip(20).toFloat(),
                 paint
             )
-            canvas.drawText(comment, left, dip(28).toFloat(), paint)
-            getIcon(category)?.draw(canvas)
+            paint.textSize = sp(12).toFloat()
+            canvas.drawText(comment, left + leftMarg, dip(36).toFloat(), paint)
+            getIcon(context, category)?.draw(canvas)
         }
     }
 }
