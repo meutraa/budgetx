@@ -10,15 +10,8 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewManager
 import androidx.core.content.ContextCompat
-import org.jetbrains.anko.AnkoViewDslMarker
-import org.jetbrains.anko.custom.ankoView
-import org.jetbrains.anko.dip
 import kotlin.math.roundToInt
-
-inline fun ViewManager.bottomItemView(init: (@AnkoViewDslMarker BottomItemView).() -> Unit) =
-    ankoView({ BottomItemView(it) }, theme = 0, init = { init() })
 
 class BottomItemView @JvmOverloads constructor(
     context: Context,

@@ -5,7 +5,6 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import org.jetbrains.anko.dip
 
 class ItemAdapter(
     @NonNull options: FirestoreRecyclerOptions<Transaction>
@@ -30,17 +29,9 @@ class ItemAdapter(
     inner class VH(private val ui: TransactionView) :
         RecyclerView.ViewHolder(ui) {
         fun bind(item: Transaction) {
-//            ui.card.setCardBackgroundColor(
-//                if (adapterPosition and 1 == 1) Color.WHITE else Color.argb(
-//                    255,
-//                    245,
-//                    245,
-//                    245
-//                )
-//            )
             ui.setTransaction(item, adapterPosition)
             ui.setOnClickListener {
-                MainActivity.dialog(ui.context, item)
+                //                MainActivity.dialog(ui.context, item)
             }
         }
     }

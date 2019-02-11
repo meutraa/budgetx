@@ -2,9 +2,9 @@ package host.lost.budgetx
 
 import android.view.ViewGroup
 import android.widget.EdgeEffect
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import org.jetbrains.anko.AnkoContext
 
 class PageAdapter : RecyclerView.Adapter<PageAdapter.VH>() {
     private val itemPool = RecyclerView.RecycledViewPool()
@@ -39,25 +39,41 @@ class PageAdapter : RecyclerView.Adapter<PageAdapter.VH>() {
     override fun getItemId(position: Int) = pages[position].hashCode().toLong()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        VH(PageUI(itemPool), parent)
+        VH(RecyclerView(parent.context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setHasFixedSize(true)
+            setRecycledViewPool(itemPool)
+            setPadding(0, dip(8), 0, 0)
+            clipToPadding = false
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun isLayoutRTL(): Boolean {
+                    return false
+                }
+            }.apply {
+                stackFromEnd = true
+            }
+        })
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.bind(pages[position])
     }
 
-    inner class VH(private val ui: PageUI, parent: ViewGroup) :
-        RecyclerView.ViewHolder(ui.createView(AnkoContext.create(parent.context, parent))) {
+    inner class VH(private val rv: RecyclerView) :
+        RecyclerView.ViewHolder(rv) {
         fun bind(account: String) {
             val index = pageIndexes[account] ?: 0
 
-            ui.itemsList.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            rv.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
                 override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
                     return EdgeEffect(view.context).apply {
                         color = MainActivity.colors[index]
                     }
                 }
             }
-            ui.itemsList.swapAdapter(itemAdapters[index].value, true)
+            rv.swapAdapter(itemAdapters[index].value, true)
         }
     }
 }

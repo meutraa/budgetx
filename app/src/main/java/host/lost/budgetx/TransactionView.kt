@@ -9,8 +9,6 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.sp
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
@@ -22,7 +20,7 @@ class TransactionView @JvmOverloads constructor(
     companion object {
         val df = SimpleDateFormat.getDateInstance()!!
         val nf = DecimalFormat("##.##")
-        val icons = mutableMapOf<String, VectorDrawable?>()
+        private val icons = mutableMapOf<String, VectorDrawable?>()
 
         fun getIcon(context: Context, category: String) =
             icons[category] ?: let {
@@ -68,15 +66,25 @@ class TransactionView @JvmOverloads constructor(
         val leftMarg = dip(16)
 
         transaction?.apply {
+            canvas.drawColor(
+                if (position and 1 == 1) Color.WHITE else Color.argb(
+                    255,
+                    245,
+                    245,
+                    245
+                )
+            )
             val left = dip(48).toFloat()
             canvas.drawText(nf.format(value), left + leftMarg, dip(20).toFloat(), paint)
             paint.textSize = sp(10).toFloat()
+            paint.textAlign = Paint.Align.RIGHT
             canvas.drawText(
                 if (date != null) df.format(date?.toDate()) else "N/A",
-                dip(270).toFloat(),
+                width - dip(16).toFloat(),
                 dip(20).toFloat(),
                 paint
             )
+            paint.textAlign = Paint.Align.LEFT
             paint.textSize = sp(12).toFloat()
             canvas.drawText(comment, left + leftMarg, dip(36).toFloat(), paint)
             getIcon(context, category)?.draw(canvas)
