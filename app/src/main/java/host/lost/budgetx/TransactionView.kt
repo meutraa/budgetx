@@ -8,17 +8,11 @@ import android.graphics.drawable.VectorDrawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewManager
 import androidx.core.content.ContextCompat
-import org.jetbrains.anko.AnkoViewDslMarker
-import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.sp
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-
-inline fun ViewManager.transactionView(init: (@AnkoViewDslMarker TransactionView).() -> Unit) =
-    ankoView({ TransactionView(it) }, theme = 0, init = { init() })
 
 class TransactionView @JvmOverloads constructor(
     context: Context,
@@ -67,7 +61,6 @@ class TransactionView @JvmOverloads constructor(
         this.position = position
         invalidate()
     }
-
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)

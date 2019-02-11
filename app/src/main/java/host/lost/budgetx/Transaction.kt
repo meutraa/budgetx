@@ -17,18 +17,4 @@ class Transaction {
     }
 
     fun getIsExpanded() = isExpanded
-
-    override fun equals(other: Any?): Boolean {
-        (other as? Transaction)?.apply {
-            return account == other.account &&
-                    category == other.category &&
-                    comment == other.comment &&
-                    date == other.date &&
-                    deleted == other.deleted &&
-                    id == other.id &&
-                    isExpanded == other.isExpanded &&
-                    value == other.value
-        }
-        return false
-    }
 }

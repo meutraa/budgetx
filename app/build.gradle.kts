@@ -49,7 +49,7 @@ dependencies {
     implementation("org.jetbrains.anko:anko-sdk25:0.10.8")
     implementation("org.jetbrains.anko:anko-constraint-layout:0.10.8")
     implementation("org.jetbrains.anko:anko-design:0.10.8")
-    implementation("org.jetbrains.anko:anko-cardview-v7:0.10.8")
+//    implementation("org.jetbrains.anko:anko-cardview-v7:0.10.8")
     implementation("org.jetbrains.anko:anko-recyclerview-v7:0.10.8")
 }
 
