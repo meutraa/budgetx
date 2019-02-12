@@ -49,8 +49,6 @@ dependencies {
     implementation("com.google.firebase:firebase-core:16.0.7")
     implementation("com.google.firebase:firebase-firestore:18.0.1")
 
-    implementation("com.firebaseui:firebase-ui-firestore:4.3.1")
-
     implementation("androidx.recyclerview:recyclerview:1.1.0-alpha02")
     implementation("androidx.viewpager2:viewpager2:1.0.0-alpha01")
 }

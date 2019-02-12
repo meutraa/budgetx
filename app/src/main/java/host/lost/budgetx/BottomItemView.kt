@@ -11,6 +11,9 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
 
 class BottomItemView @JvmOverloads constructor(
@@ -19,9 +22,10 @@ class BottomItemView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val items = listOf(
+    private val items = mutableListOf(
         "Home", "Toka", "Paul", "Savings", "British"
     )
+    private val nf = DecimalFormat("##.##")
     private val icons = MutableList<VectorDrawable?>(5) {
         null
     }
@@ -32,12 +36,27 @@ class BottomItemView @JvmOverloads constructor(
         textSize = 24.0f
     }
 
+    init {
+        if (offsetCache.get() == 0) {
+            offsetCache.set((width / 5.0).roundToInt())
+        }
+    }
+
+    companion object {
+        val offsetCache = AtomicInteger()
+    }
+
     private var uncheckedColor = Color.GRAY
     var checkedItem: Int = 0
         set(value) {
             field = value
             invalidate()
         }
+
+    fun setValue(position: Int, value: Double) {
+        items[position] = nf.format(value)
+        invalidate()
+    }
 
     fun setOnItemClickListener(onClickListener: BottomItemView.(pos: Int) -> Unit) {
         setOnTouchListener { _, event ->
@@ -59,7 +78,8 @@ class BottomItemView @JvmOverloads constructor(
     }
 
     private fun getIcon(position: Int): VectorDrawable? {
-        val xoffset = (position * (width / 5.0)).roundToInt()
+        val offset = offsetCache.get()
+        val xoffset = position * offset
         return icons[position] ?: let {
             icons[position] =
                 (ContextCompat.getDrawable(
@@ -72,7 +92,7 @@ class BottomItemView @JvmOverloads constructor(
                         else -> R.drawable.menu_british
                     }
                 ) as? VectorDrawable)?.apply {
-                    val diff = (((width / 5.0) - dip(32)) / 2.0).roundToInt()
+                    val diff = ((offset - dip(32)) / 2.0).roundToInt()
                     setBounds(diff + xoffset, dip(2), dip(32) + diff + xoffset, dip(34))
                 }
             icons[position]
@@ -83,7 +103,7 @@ class BottomItemView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         // Icon is 32 wide
-        val offset = (width / 5.0).roundToInt()
+        val offset = offsetCache.get()
 
         (0..4).forEach {
             val itoffset = offset * it

@@ -3,6 +3,7 @@ package host.lost.budgetx
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Debug
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -10,25 +11,21 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 
-//returns dip(dp) dimension value in pixels
 fun Context.dip(value: Int): Int = (value * resources.displayMetrics.density).toInt()
-
-fun Context.dip(value: Float): Int = (value * resources.displayMetrics.density).toInt()
-
-//return sp dimension value in pixels
 fun Context.sp(value: Int): Int = (value * resources.displayMetrics.scaledDensity).toInt()
-
-fun Context.sp(value: Float): Int = (value * resources.displayMetrics.scaledDensity).toInt()
-
-//the same for the views
 inline fun View.dip(value: Int): Int = context.dip(value)
-
-inline fun View.dip(value: Float): Int = context.dip(value)
 inline fun View.sp(value: Int): Int = context.sp(value)
-inline fun View.sp(value: Float): Int = context.sp(value)
 
 class MainActivity : AppCompatActivity() {
+
+    val db = FirebaseFirestore.getInstance().apply {
+        firestoreSettings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .build()
+    }
+    lateinit var homeItem: BottomItemView
 
     companion object {
         private val valueId = View.generateViewId()
@@ -37,10 +34,6 @@ class MainActivity : AppCompatActivity() {
         private val commentTilId = View.generateViewId()
         private val iconId = View.generateViewId()
         private val dateId = View.generateViewId()
-
-        val db: FirebaseFirestore by lazy {
-            FirebaseFirestore.getInstance()
-        }
 
         val colors = List(5) {
             Color.parseColor(
@@ -108,10 +101,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        window.setBackgroundDrawable(null)
 
         lateinit var pages: ViewPager2
-        lateinit var homeItem: BottomItemView
 
         pages = ViewPager2(this).apply {
             layoutParams = ViewGroup.LayoutParams(
@@ -119,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setPadding(0, 0, 0, dip(52))
-            adapter = PageAdapter()
+            adapter = PageAdapter(this@MainActivity)
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)

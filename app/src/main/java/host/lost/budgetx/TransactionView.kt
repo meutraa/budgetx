@@ -9,6 +9,8 @@ import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentSnapshot
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
@@ -51,10 +53,10 @@ class TransactionView @JvmOverloads constructor(
         textSize = sp(12).toFloat()
     }
 
-    private var transaction: Transaction? = null
+    private var transaction: DocumentSnapshot? = null
     private var position: Int = 0
 
-    fun setTransaction(item: Transaction, position: Int) {
+    fun setTransaction(item: DocumentSnapshot, position: Int) {
         transaction = item
         this.position = position
         invalidate()
@@ -66,8 +68,12 @@ class TransactionView @JvmOverloads constructor(
         val leftMarg = dip(16)
 
         transaction?.apply {
+            val value = this["value"] as? Number ?: 0.0
+            val date = this["date"] as? Timestamp ?: Timestamp.now()
+            val comment = this["comment"] as? String ?: "Err"
+            val category = this["category"] as? String ?: "Err"
             canvas.drawColor(
-                if (position and 1 == 1) Color.WHITE else Color.argb(
+                if (position and 1 == 1) Color.TRANSPARENT else Color.argb(
                     255,
                     245,
                     245,
@@ -79,7 +85,7 @@ class TransactionView @JvmOverloads constructor(
             paint.textSize = sp(10).toFloat()
             paint.textAlign = Paint.Align.RIGHT
             canvas.drawText(
-                if (date != null) df.format(date?.toDate()) else "N/A",
+                if (date != null) df.format(date.toDate()) else "N/A",
                 width - dip(16).toFloat(),
                 dip(20).toFloat(),
                 paint
