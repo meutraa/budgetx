@@ -7,13 +7,13 @@
 
     <application
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
         android:label="BudgetX"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning"
         tools:replace="android:label">
-        <!--android:icon="@mipmap/ic_launcher"-->
-        <!--android:roundIcon="@mipmap/ic_launcher_round"-->
         <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan">

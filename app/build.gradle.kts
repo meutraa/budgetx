@@ -13,19 +13,11 @@ android {
         applicationId = "host.lost.budgetx"
         minSdkVersion(28)
         targetSdkVersion(28)
-        versionCode = 1
-        versionName = "0.1"
+        versionCode = 2
+        resConfigs("xxhdpi")
+        versionName = "1.0"
     }
     buildTypes {
-        getByName("debug") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isUseProguard = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
