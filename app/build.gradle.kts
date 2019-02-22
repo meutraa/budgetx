@@ -13,9 +13,9 @@ android {
         applicationId = "host.lost.budgetx"
         minSdkVersion(28)
         targetSdkVersion(28)
-        versionCode = 2
+        versionCode = 3
         resConfigs("xxhdpi")
-        versionName = "1.0"
+        versionName = "1.1"
     }
     buildTypes {
         getByName("release") {

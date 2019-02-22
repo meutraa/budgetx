@@ -30,12 +30,17 @@ class EditItemView(context: Context) : FrameLayout(context) {
     private val etValue = EditText(context).apply {
         maxLines = 1
         focusable = View.FOCUSABLE
-        hint = "-100"
+        hint = "100"
         isFocusableInTouchMode = true
         imeOptions = EditorInfo.IME_ACTION_NEXT
         inputType = InputType.TYPE_CLASS_NUMBER or
-                InputType.TYPE_NUMBER_FLAG_DECIMAL or
-                InputType.TYPE_NUMBER_FLAG_SIGNED
+                InputType.TYPE_NUMBER_FLAG_DECIMAL
+    }
+
+    private val incomeToggle = CheckBox(context).apply {
+        text = "Income"
+        isChecked = false
+        textSize = 12.0f
     }
 
     private val etComment: AutoCompleteTextView = AutoCompleteTextView(context).apply {
@@ -51,6 +56,8 @@ class EditItemView(context: Context) : FrameLayout(context) {
     }
 
     private val tvDate = TextView(context).apply {
+        setTextColor(Color.BLACK)
+        textSize = 12.0f
         setOnClickListener {
             val cal = Calendar.getInstance().apply {
                 time = date.toDate()
@@ -170,7 +177,7 @@ class EditItemView(context: Context) : FrameLayout(context) {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                setMargins(dip(60), dip(4), dip(128), 0)
+                setMargins(dip(60), dip(4), dip(172), 0)
             })
         addView(
             etComment,
@@ -187,7 +194,16 @@ class EditItemView(context: Context) : FrameLayout(context) {
                 FrameLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 gravity = Gravity.END
-                setMargins(0, dip(20), dip(16), 0)
+                setMargins(0, dip(18), dip(16), 0)
+            })
+        addView(
+            incomeToggle,
+            FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.END
+                setMargins(0, dip(10), dip(94), 0)
             })
         addView(ivCategory, FrameLayout.LayoutParams(dip(48), dip(48)).apply {
             setMargins(dip(8), dip(4), 0, 0)
@@ -199,10 +215,14 @@ class EditItemView(context: Context) : FrameLayout(context) {
 
     fun save() {
         val db = (context as? MainActivity)?.db ?: return
+        var number = etValue.text.toString().toDoubleOrNull() ?: 0.0
+        if (!incomeToggle.isChecked) {
+            number = -number
+        }
 
         val item = mapOf(
             "comment" to etComment.text.toString(),
-            "value" to (etValue.text.toString().toDoubleOrNull() ?: 0.0),
+            "value" to number,
             "category" to category,
             "account" to account,
             "date" to date,
@@ -289,6 +309,13 @@ class EditItemView(context: Context) : FrameLayout(context) {
             refreshView()
         }
 
+    private fun refreshValue() {
+        val number = this@EditItemView.value.toDoubleOrNull() ?: 0.0
+        incomeToggle.isChecked = number > 0.0
+        etValue.setText(if (number == 0.0) "" else nf.format(Math.abs(number)))
+        etValue.setSelection(etValue.text.length)
+    }
+
     private fun refreshCategory() {
         ivCategory.setImageResource(TransactionView.getIconResource(category))
     }
@@ -307,8 +334,7 @@ class EditItemView(context: Context) : FrameLayout(context) {
 
     private fun refreshView() {
         post {
-            etValue.setText(this@EditItemView.value)
-            etValue.setSelection(this@EditItemView.value.length)
+            refreshValue()
             etValue.requestFocus()
             etComment.setText(comment)
             tvDate.text = dateStr
