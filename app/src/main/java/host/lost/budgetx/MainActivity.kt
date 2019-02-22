@@ -22,19 +22,18 @@ import java.util.concurrent.Executors
 
 fun Context.dip(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 fun Context.sp(value: Int): Int = (value * resources.displayMetrics.scaledDensity).toInt()
-inline fun View.dip(value: Int): Int = context.dip(value)
-inline fun View.sp(value: Int): Int = context.sp(value)
+fun View.dip(value: Int): Int = context.dip(value)
+fun View.sp(value: Int): Int = context.sp(value)
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var db: FirebaseFirestore
     lateinit var homeItem: BottomItemView
-    lateinit var editItemView: EditItemView
-    var dialog: AlertDialog? = null
+    private lateinit var editItemView: EditItemView
+    private var dialog: AlertDialog? = null
 
     companion object {
         val pool: ExecutorService = Executors.newWorkStealingPool()
-        var layoutThread: ExecutorService = Executors.newFixedThreadPool(1)
         var isFirestoreReady = false
         val categories = arrayOf(
             "Food & Drink",
@@ -105,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        layoutThread.execute {
+        pool.execute {
             lateinit var pages: ViewPager2
 
             pages = ViewPager2(this).apply {
@@ -137,7 +136,6 @@ class MainActivity : AppCompatActivity() {
                     importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
                     addView(pages)
                     addView(homeItem)
-                    layoutThread.shutdown()
                 }
             }
         }

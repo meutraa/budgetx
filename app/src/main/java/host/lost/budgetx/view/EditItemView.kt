@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import host.lost.budgetx.MainActivity
@@ -21,17 +23,21 @@ import host.lost.budgetx.view.TransactionView.Companion.df
 import host.lost.budgetx.view.TransactionView.Companion.getIconResource
 import host.lost.budgetx.view.TransactionView.Companion.nf
 import host.lost.budgetx.widget.CommentAdapter
+import host.lost.budgetx.widget.TextInputAutoCompleteTextView
 import java.util.*
 
 class EditItemView(context: Context) : FrameLayout(context) {
 
-    private val previousComments = CommentAdapter(context, this)
+    private val tilValue = TextInputLayout(context).apply {
+        hint = "Value"
+    }
+    private val tilComment: TextInputLayout = TextInputLayout(context).apply {
+        hint = "Comment"
+    }
 
-    private val etValue = EditText(context).apply {
+    private val etValue = TextInputEditText(tilValue.context).apply {
         maxLines = 1
-        focusable = View.FOCUSABLE
-        hint = "100"
-        isFocusableInTouchMode = true
+        textSize = 13.0f
         imeOptions = EditorInfo.IME_ACTION_NEXT
         inputType = InputType.TYPE_CLASS_NUMBER or
                 InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -43,15 +49,15 @@ class EditItemView(context: Context) : FrameLayout(context) {
         textSize = 12.0f
     }
 
-    private val etComment: AutoCompleteTextView = AutoCompleteTextView(context).apply {
+    private val etComment = TextInputAutoCompleteTextView(tilComment.context).apply {
         maxLines = 1
-        hint = "Cat food"
         imeOptions = EditorInfo.IME_ACTION_DONE
         textSize = 13.0f
         inputType = InputType.TYPE_CLASS_TEXT or
+                InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or
                 InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         post {
-            setAdapter(previousComments)
+            setAdapter(CommentAdapter(this@EditItemView))
         }
     }
 
@@ -171,22 +177,24 @@ class EditItemView(context: Context) : FrameLayout(context) {
     private var date: Timestamp = Timestamp.now()
 
     init {
-        addView(
-            etValue,
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(dip(60), dip(4), dip(172), 0)
-            })
-        addView(
-            etComment,
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(dip(60), dip(56), dip(16), 0)
-            })
+        addView(tilValue.apply {
+            addView(etValue)
+        }, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            dip(48)
+        ).apply {
+            setMargins(dip(60), dip(4), dip(172), 0)
+        })
+
+        addView(tilComment.apply {
+            addView(etComment)
+        }, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            dip(48)
+        ).apply {
+            setMargins(dip(60), dip(56), dip(16), 0)
+        })
+
         addView(
             tvDate,
             FrameLayout.LayoutParams(
@@ -194,8 +202,9 @@ class EditItemView(context: Context) : FrameLayout(context) {
                 FrameLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 gravity = Gravity.END
-                setMargins(0, dip(18), dip(16), 0)
+                setMargins(0, dip(22), dip(16), 0)
             })
+
         addView(
             incomeToggle,
             FrameLayout.LayoutParams(
@@ -203,13 +212,15 @@ class EditItemView(context: Context) : FrameLayout(context) {
                 FrameLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 gravity = Gravity.END
-                setMargins(0, dip(10), dip(94), 0)
+                setMargins(0, dip(14), dip(94), 0)
             })
+
         addView(ivCategory, FrameLayout.LayoutParams(dip(48), dip(48)).apply {
-            setMargins(dip(8), dip(4), 0, 0)
+            setMargins(dip(8), dip(6), 0, 0)
         })
+
         addView(ivAccount, FrameLayout.LayoutParams(dip(48), dip(48)).apply {
-            setMargins(dip(8), dip(52), 0, 0)
+            setMargins(dip(8), dip(58), 0, 0)
         })
     }
 
@@ -313,7 +324,7 @@ class EditItemView(context: Context) : FrameLayout(context) {
         val number = this@EditItemView.value.toDoubleOrNull() ?: 0.0
         incomeToggle.isChecked = number > 0.0
         etValue.setText(if (number == 0.0) "" else nf.format(Math.abs(number)))
-        etValue.setSelection(etValue.text.length)
+        etValue.setSelection(etValue.text?.length ?: 0)
     }
 
     private fun refreshCategory() {

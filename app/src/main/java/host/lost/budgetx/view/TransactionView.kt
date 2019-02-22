@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.text.TextPaint
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.firebase.Timestamp
@@ -21,17 +22,17 @@ class TransactionView(context: Context, private val compressed: Boolean = false)
         val nf = DecimalFormat("##.##")
 
         fun getIconResource(category: String) = when (category) {
-                "Food & Drink" -> R.drawable.ic_restaurant_menu
-                "Bills" -> R.drawable.ic_money_off
-                "Personal" -> R.drawable.ic_face
-                "Holiday" -> R.drawable.ic_beach_access
-                "Medical" -> R.drawable.ic_local_pharmacy
-                "Travel" -> R.drawable.ic_airport_shuttle
-                "Pets" -> R.drawable.ic_pets
-                "House" -> R.drawable.ic_home
-                "Income" -> R.drawable.ic_credit_card
-                else -> R.drawable.ic_all_inclusive
-            }
+            "Food & Drink" -> R.drawable.ic_restaurant_menu
+            "Bills" -> R.drawable.ic_money_off
+            "Personal" -> R.drawable.ic_face
+            "Holiday" -> R.drawable.ic_beach_access
+            "Medical" -> R.drawable.ic_local_pharmacy
+            "Travel" -> R.drawable.ic_airport_shuttle
+            "Pets" -> R.drawable.ic_pets
+            "House" -> R.drawable.ic_home
+            "Income" -> R.drawable.ic_credit_card
+            else -> R.drawable.ic_all_inclusive
+        }
 
         var backgroundColorOdd = 0
         var leftMargin = 0.0f
@@ -66,14 +67,22 @@ class TransactionView(context: Context, private val compressed: Boolean = false)
     private var comment: String = ""
     private var category: String = ""
 
-    fun setTransaction(item: DocumentSnapshot, position: Int) = MainActivity.pool.execute {
+    fun setTransaction(item: DocumentSnapshot, position: Int) {
         val value = item["value"] as? Number ?: 0.0
         val date = item["date"] as? Timestamp ?: Timestamp.now()
 
         this@TransactionView.value = nf.format(value)
+        // FIXME: this crashed with out of bounds, calendar -3
         this@TransactionView.date = if (date != null) df.format(date.toDate()) else "N/A"
-        color = if (position and 1 == 1) Color.TRANSPARENT else backgroundColorOdd
+        color =
+            if (position and 1 == 1) (if (compressed) Color.WHITE else Color.TRANSPARENT) else backgroundColorOdd
         comment = item["comment"] as? String ?: "Err"
+        if (compressed && comment.length > 30) {
+            Log.d("compressed", "$comment")
+            val spaceIndex = comment.indexOf(" ", 26)
+            comment = "${comment.substring(0, if (spaceIndex == -1) 30 else spaceIndex)}…"
+            Log.d("compressed", "$comment")
+        }
         category = item["category"] as? String ?: "Err"
 
         postInvalidate()

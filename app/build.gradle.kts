@@ -13,9 +13,9 @@ android {
         applicationId = "host.lost.budgetx"
         minSdkVersion(28)
         targetSdkVersion(28)
-        versionCode = 3
+        versionCode = 4
         resConfigs("xxhdpi")
-        versionName = "1.1"
+        versionName = "1.2"
     }
     buildTypes {
         getByName("release") {
@@ -41,8 +41,11 @@ dependencies {
     implementation("com.google.firebase:firebase-core:16.0.7")
     implementation("com.google.firebase:firebase-firestore:18.0.1")
 
+    implementation("com.google.android.material:material:1.1.0-alpha03")
+
     implementation("androidx.recyclerview:recyclerview:1.1.0-alpha02")
     implementation("androidx.viewpager2:viewpager2:1.0.0-alpha01")
+
 }
 
 apply {

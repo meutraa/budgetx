@@ -9,13 +9,12 @@ import com.google.firebase.firestore.Query
 import host.lost.budgetx.MainActivity
 import host.lost.budgetx.dip
 import host.lost.budgetx.recyclerview.widget.ItemAdapter
-import host.lost.budgetx.recyclerview.widget.ItemAdapter.Companion.params
 import host.lost.budgetx.view.EditItemView
 import host.lost.budgetx.view.TransactionView
 
-class CommentAdapter(context: Context, private val editItemView: EditItemView) :
+class CommentAdapter(private val editItemView: EditItemView) :
     ArrayAdapter<CommentAdapter.DropdownItem>(
-        context,
+        editItemView.context,
         android.R.layout.simple_dropdown_item_1line, mutableListOf()
     ) {
 
